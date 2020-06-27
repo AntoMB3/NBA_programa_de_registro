@@ -36,6 +36,8 @@ void mostrardatos();
 bool searchrank(int);
 void pdpe();
 void archivoteranking(int );
+void creararchivoporequipo();
+void showteamfile();
 
 int main(){
   for(int i=0; i<(MAX_EQ * 12); i++){
@@ -49,7 +51,10 @@ srand(time(NULL));
 
 for(int i=0;i<MAX_EQ;i++){
   equipos[i].clave_registro=10000000+rand()%(99999999-10000000);//genera numero aleatorio de registro
-  equipos[i].nombre_equipo = "Nombre " ;//esto ahorita solo guarda el numero tiene que guardar un nombre aleatorio asi que hay que arreglar eso 
+  cout<<"Ingresa el nombre del equipo"<<endl;
+  fflush(stdin);
+  getline(cin,equipos[i].nombre_equipo);
+  fflush(stdin);//esto ahorita solo guarda el numero tiene que guardar un nombre aleatorio asi que hay que arreglar eso 
   for(int j=0;j<12;j++){
  equipos[i].info_jugador[j].nombre_jugador = "jugador" ;//igual aqui tiene que ir un nombre aleatorio ahorita es solo para poder avanzar
  equipos[i].info_jugador[j].peso=65+rand()%(111-65);//peso aleatorio
@@ -79,7 +84,8 @@ do{
      break;
        case 4: archivoteranking(count);
                break;
-       case 5: 
+       case 5: creararchivoporequipo();
+       showteamfile();
      break;
        case 6: 
                break;
@@ -192,7 +198,9 @@ void archivoteranking(int count){
       }
     }
   }
-
+/*Recorremos el arreglo ordenado del ranking para tener los mejores hasta arriba, luego buscamos en todos los equipos
+  el jugador que tenga el mismo ranking y agregamos sus datos al archvio, después rompemos el ciclo para buscar a ese jugador
+  y vovlemos a comenzar con el segundo pueso del ranking */
   for(int i = 0; i<count; i++){
     for(int j = 0; j<MAX_EQ;j++){
       for(int k = 0; k<12; k++){
@@ -209,4 +217,69 @@ void archivoteranking(int count){
   }
 
   archvio_ranking.close();
+}
+//Una función para crear archivos de texto de cada equipo
+void creararchivoporequipo(){
+ofstream file;
+string temp;
+for(int i=0; i<MAX_EQ; i++){
+  temp = equipos[i].nombre_equipo + ".txt";
+  file.open(temp.c_str(),ios::out);
+  if(file.fail()){
+    cout<<"No se pudo abrir el archivo"<<endl;
+    system("pause");
+    return;
+  }
+  file<<"Nombre del equipo: "<<equipos[i].nombre_equipo<<endl;
+  file<<"Jugadores: \n"<<endl;
+  for(int j=0; j<12; j++){
+    file<<equipos[i].info_jugador[j].ranking<<" ";
+    file<<equipos[i].info_jugador[j].nombre_jugador<<" ";
+    file<<equipos[i].info_jugador[j].peso<<" ";
+    file<<equipos[i].info_jugador[j].edad<<"\n"<<endl;
+  }
+  file.close();
+}
+}
+/*La función en base a un nombre dado, busca el archvio de texto correspondiente y muestra sus datos en pantalla */
+void showteamfile(){
+  string team_temp, team_info;
+  int temp;
+  
+  bool exist = false;
+  //Se repite el ciclo mientras el equipo no se encuentre
+  do{
+    //Obtenemos el equipo a buscar información
+  cout<<"Que equipo deseas consultar"<<endl;
+  fflush(stdin);
+  getline(cin,team_temp);
+  fflush(stdin);
+    for(int i=0; i<MAX_EQ; i++){
+      if(equipos[i].nombre_equipo == team_temp){
+        exist = true;
+        temp = i;
+      }
+    }
+    if(exist==false){
+      cout<<"El equipo no se encuentra"<<endl;
+    }
+
+  }while(exist == false);
+  system("cls");
+  //Abrimos el archivo de lectura
+  ifstream file;
+  team_temp += ".txt";
+  file.open(team_temp.c_str(),ios::in);
+  if(file.fail()){
+    cout<<"ERROR: El archivo no se pudo abrir"<<endl;
+    system("pause");
+    return;
+  }
+  //Mostramos cada linea del archivo mientras no sea el final del mismo
+  while(!file.eof()){
+    getline(file,team_info);
+    cout<<team_info<<endl;
+  }
+  file.close();
+  system("pause");
 }

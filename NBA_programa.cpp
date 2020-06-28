@@ -38,6 +38,8 @@ void pdpe();
 void archivoteranking(int );
 void creararchivoporequipo();
 void showteamfile();
+void bestplayer();
+void topten(int );
 
 int main(){
   for(int i=0; i<(MAX_EQ * 12); i++){
@@ -87,13 +89,13 @@ do{
        case 5: creararchivoporequipo();
        showteamfile();
      break;
-       case 6: 
+       case 6: bestplayer();
                break;
     case 7:
                break;
        case 8: 
                break;
-       case 9: 
+       case 9: topten(count);
      break;
        case 10: 
                break;
@@ -282,4 +284,71 @@ void showteamfile(){
   }
   file.close();
   system("pause");
+}
+//Esta funcion va a obtener la informacion del mejor jugador del equipo elegido
+void bestplayer(){
+  string team_temp;
+  int temp, temp2;
+  bool exist = false;
+  //Volvemos a aplciar la de la anterior, de buscar si existe o no el equipo
+  do{
+  cout<<"De que equipo deseas consultar"<<endl;
+  fflush(stdin);
+  getline(cin,team_temp);
+  fflush(stdin);
+  for(int i=0; i<MAX_EQ; i++){
+      if(equipos[i].nombre_equipo == team_temp){
+        exist = true;
+        temp = i;
+      }
+    }
+    if(exist==false){
+      cout<<"El equipo no se encuentra"<<endl;
+    }
+  }while(exist == false);
+  system("cls");
+  //Comparamos el ranking de cada uno de los jugadores para obtener el mejor
+  int mejor = equipos[temp].info_jugador[0].ranking;
+  temp2 = 0;
+  for(int i =1; i<12;i++){
+    if(equipos[temp].info_jugador[i].ranking < mejor){
+      mejor = equipos[temp].info_jugador[i].ranking;
+      temp2 = i;
+    }
+  }
+  cout<<"El mejor jugador del equipo es: "<<equipos[temp].info_jugador[temp2].nombre_jugador<<endl;
+  cout<<"Peso: "<< equipos[temp].info_jugador[temp2].peso<<endl;
+  cout<<"Edad: "<< equipos[temp].info_jugador[temp2].edad<<endl;
+  system("pause");
+
+}
+//La funcion va a imprimir los mejores 10 jugadores de la liga
+//aplicamos el mismo procediemiento que la funcion donde guardamos el ranking en un archivo
+void topten(int count){
+   //Ordenamos el ranking con el método de la burbuja
+  for(int i=0;i<count;i++){
+    for(int j = i+1;j<count;j++){
+      if(rankings[i] > rankings[j]){
+        int aux = rankings[i];
+        rankings[i] = rankings[j];
+        rankings[j] = aux;
+      }
+    }
+  }
+  cout<<"Top 10 jugadores de la liga"<<endl;
+  for(int i = 0; i<10; i++){
+    for(int j = 0; j<MAX_EQ;j++){
+      for(int k = 0; k<12; k++){
+        if(rankings[i] == equipos[j].info_jugador[k].ranking){
+          cout<<equipos[j].info_jugador[k].ranking<<" ";
+          cout<<equipos[j].info_jugador[k].nombre_jugador<<" ";
+          cout<<equipos[j].info_jugador[k].peso<<" ";
+          cout<<equipos[j].info_jugador[k].edad<<"\n"<<endl;
+          j = MAX_EQ;
+          break;
+          system("pause");
+        }
+      }
+    }
+  }
 }

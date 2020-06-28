@@ -18,6 +18,7 @@ int ranking;
 }jugadores[12];*/
 int maxrank = 4 * 12;
 int rankings [MAX_EQ * 12]; //creamos el ranking 
+
 struct equipo{ // toda la informacion que vas a guardad de cada equipo
  unsigned long clave_registro; 
  string nombre_equipo;
@@ -28,7 +29,10 @@ int edad;
 int ranking;
 }info_jugador[12];
    // unsigned long guarda 32 bits le caben 10 digitos 
-}equipos[MAX_EQ];
+struct equipo *next;
+}equipos[MAX_EQ]; 
+equipo *teams;
+equipo *list = NULL, *primero = NULL;
 
 //funciones:
 int menu(); 
@@ -40,7 +44,9 @@ void creararchivoporequipo();
 void showteamfile();
 void bestplayer();
 void topten(int );
-
+void lista(int);
+equipo *crearnodo(int);
+void printlist();
 int main(){
   for(int i=0; i<(MAX_EQ * 12); i++){
     rankings[i] = 0;
@@ -97,7 +103,10 @@ do{
                break;
        case 9: topten(count);
      break;
-       case 10: 
+       case 10: cout<<"Que equipo quieres ver?"<<endl;
+       int z;
+       cin>>z;
+       lista(z);
                break;
        case 11: // acaba con el do-while
                break;
@@ -351,4 +360,46 @@ void topten(int count){
       }
     }
   }
+}
+//Funcion para crear la lista enlazada con la informacion de los jugadoras
+void lista(int x){
+  equipo *s = crearnodo(x);
+  if(list == NULL){
+    list = primero = s;
+  }
+  else{
+    list->next = s;
+    list = s;
+  }
+  printlist();
+}
+
+equipo *crearnodo(int y){
+  teams = new equipo;
+  teams->nombre_equipo = equipos[y].nombre_equipo;
+  for (int i= 0; i<12;i++){
+    teams->info_jugador[i].nombre_jugador = equipos[y].info_jugador[i].nombre_jugador;
+    teams->info_jugador[i].peso = equipos[y].info_jugador[i].peso;
+    teams->info_jugador[i].edad = equipos[y].info_jugador[i].edad;
+    teams->info_jugador[i].ranking = equipos[y].info_jugador[i].ranking;
+}
+      teams-> next = NULL;
+      return teams;
+}
+void printlist(){
+  list = primero;
+  do{
+    cout<<"Equipo: "<<list->nombre_equipo<<endl;
+    cout<<"Jugadores :"<<endl;
+    for(int i = 0; i <12; i++)
+    {
+      cout<<"Nombre: "<<list->info_jugador[i].nombre_jugador<<endl;
+      cout<<"Edad: "<<list->info_jugador[i].edad<<endl;
+      cout<<"Peso: "<<list->info_jugador[i].peso<<endl;
+      cout<<"Ranking: "<<list->info_jugador[i].ranking<<endl;
+    }
+    list = list->next;
+
+  }while(list != NULL);
+  system("pause");
 }

@@ -384,6 +384,7 @@ poder introducrilo en la lista*/
 equipo *crearnodo(int y){
   //Creamos el espacio de memoria
   teams = new equipo;
+  y=y-1;
   teams->nombre_equipo = equipos[y].nombre_equipo;
   for (int i= 0; i<12;i++){
     teams->info_jugador[i].nombre_jugador = equipos[y].info_jugador[i].nombre_jugador;

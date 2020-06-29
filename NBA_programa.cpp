@@ -45,6 +45,9 @@ void showteamfile();
 void bestplayer();
 void topten(int );
 void lista(int);
+void creararchivobinario();
+void leerarchivob();
+
 equipo *crearnodo(int);
 void printlist();
 int main(){
@@ -97,9 +100,9 @@ do{
      break;
        case 6: bestplayer();
                break;
-    case 7:
+    case 7: creararchivobinario();
                break;
-       case 8: 
+       case 8: leerarchivob();
                break;
        case 9: topten(count);
      break;
@@ -361,20 +364,25 @@ void topten(int count){
     }
   }
 }
-//Funcion para crear la lista enlazada con la informacion de los jugadoras
+//Funcion para crear la lista enlazada con la informacion de los jugadores
 void lista(int x){
+  //Mandamos a llamar a la función para que nos regrese un apuntador y añadirlo en al lista
   equipo *s = crearnodo(x);
+  //Si es el primero en la lista, lo guarda en lista
   if(list == NULL){
     list = primero = s;
   }
+  //Si no lo guardo en la posición next y recorre la lista
   else{
     list->next = s;
     list = s;
   }
   printlist();
 }
-
+/*Esta función va a retonar una apuntador de tipo estructura llenado con los datos del equipo pedido. Esto para
+poder introducrilo en la lista*/
 equipo *crearnodo(int y){
+  //Creamos el espacio de memoria
   teams = new equipo;
   teams->nombre_equipo = equipos[y].nombre_equipo;
   for (int i= 0; i<12;i++){
@@ -386,8 +394,10 @@ equipo *crearnodo(int y){
       teams-> next = NULL;
       return teams;
 }
+//La fucnión va a imprimir los datos de la lista enlazada.
 void printlist(){
   list = primero;
+  //Se asigna al primero lugar de la lista y se mueve nodo por nodo hasta llegar al final o sea NULL
   do{
     cout<<"Equipo: "<<list->nombre_equipo<<endl;
     cout<<"Jugadores :"<<endl;
@@ -402,4 +412,39 @@ void printlist(){
 
   }while(list != NULL);
   system("pause");
+}
+
+void creararchivobinario(){
+  FILE* arch;
+  char temp[50];
+  for(int i=0; i<MAX_EQ; i++){
+   string aux = equipos[i].nombre_equipo + ".dat";
+    strcpy(temp,aux.c_str());
+    arch = fopen(temp,"wb");
+    fwrite(&equipos[i],sizeof(equipo),1,arch);
+    fclose(arch);
+}
+}
+
+void leerarchivob(){
+  FILE* arch;
+  char temp[50];
+  for(int i=0; i<MAX_EQ;i++){
+    string aux = equipos[i].nombre_equipo + ".dat";
+    strcpy(temp,aux.c_str());
+    arch = fopen(temp,"rb");
+    fread(&equipos[i],sizeof(equipo),1,arch);
+    while(!feof(arch)){
+      cout<<"Nombre equipo: "<<equipos[i].nombre_equipo<<endl;
+      cout<<"Jugadores:\n"<<endl;
+      for(int j=0; j<12; j++){
+        cout<<"Jugador: "<<equipos[i].info_jugador[j].nombre_jugador<<endl;
+        cout<<"Edad: "<<equipos[i].info_jugador[j].edad<<endl;
+        cout<<"Peso: "<<equipos[i].info_jugador[j].peso<<endl;
+      }
+      fread(&equipos[i],sizeof(equipo),1,arch);
+      system("pause");
+    }
+    fclose(arch);
+  }
 }

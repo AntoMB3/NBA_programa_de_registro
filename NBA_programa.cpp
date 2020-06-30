@@ -47,6 +47,7 @@ void topten(int );
 void lista(int);
 void creararchivobinario();
 void leerarchivob();
+string nameplayer();
 
 equipo *crearnodo(int);
 void printlist();
@@ -67,7 +68,7 @@ for(int i=0;i<MAX_EQ;i++){
   getline(cin,equipos[i].nombre_equipo);
   fflush(stdin);//esto ahorita solo guarda el numero tiene que guardar un nombre aleatorio asi que hay que arreglar eso 
   for(int j=0;j<12;j++){
- equipos[i].info_jugador[j].nombre_jugador = "jugador" ;//igual aqui tiene que ir un nombre aleatorio ahorita es solo para poder avanzar
+ equipos[i].info_jugador[j].nombre_jugador = nameplayer();//igual aqui tiene que ir un nombre aleatorio ahorita es solo para poder avanzar
  equipos[i].info_jugador[j].peso=65+rand()%(111-65);//peso aleatorio
  equipos[i].info_jugador[j].edad=21+rand()%(37-21);//edad aleatoria
  do{
@@ -159,6 +160,7 @@ void mostrardatos(){
   }
 }
 
+/*La función va a retornar un valor booleano viendo si existe ese jugador en el ranking o no*/
 bool searchrank(int y){
   for(int i=0; i<maxrank; i++){
     if(rankings[i] == y){
@@ -236,14 +238,17 @@ void archivoteranking(int count){
 void creararchivoporequipo(){
 ofstream file;
 string temp;
+//Creamos el archivo con el  nombre del equipo + un .txt para que se abra como archivo de texto
 for(int i=0; i<MAX_EQ; i++){
   temp = equipos[i].nombre_equipo + ".txt";
   file.open(temp.c_str(),ios::out);
+  //Verificiamos que no haya error al abrir
   if(file.fail()){
     cout<<"No se pudo abrir el archivo"<<endl;
     system("pause");
     return;
   }
+  //Escribimos en el archivo la información 
   file<<"Nombre del equipo: "<<equipos[i].nombre_equipo<<endl;
   file<<"Jugadores: \n"<<endl;
   for(int j=0; j<12; j++){
@@ -252,6 +257,7 @@ for(int i=0; i<MAX_EQ; i++){
     file<<equipos[i].info_jugador[j].peso<<" ";
     file<<equipos[i].info_jugador[j].edad<<"\n"<<endl;
   }
+  //Cerrramos el archivo
   file.close();
 }
 }
@@ -268,6 +274,7 @@ void showteamfile(){
   fflush(stdin);
   getline(cin,team_temp);
   fflush(stdin);
+  //Buscamos si existe un equipo con ese nombre con el uso de una bandera/booleano
     for(int i=0; i<MAX_EQ; i++){
       if(equipos[i].nombre_equipo == team_temp){
         exist = true;
@@ -289,7 +296,7 @@ void showteamfile(){
     system("pause");
     return;
   }
-  //Mostramos cada linea del archivo mientras no sea el final del mismo
+  //Mostramos cada linea del archivo mientras no sea el final del mismo, o sea hasta el final del archivo
   while(!file.eof()){
     getline(file,team_info);
     cout<<team_info<<endl;
@@ -302,7 +309,7 @@ void bestplayer(){
   string team_temp;
   int temp, temp2;
   bool exist = false;
-  //Volvemos a aplciar la de la anterior, de buscar si existe o no el equipo
+  //Volvemos a aplicar la de la anterior, de buscar si existe o no el equipo
   do{
   cout<<"De que equipo deseas consultar"<<endl;
   fflush(stdin);
@@ -347,6 +354,7 @@ void topten(int count){
       }
     }
   }
+  //Buscamos los jugadores con los rankings asignados en cada equipo y los mostramos en pantalla
   cout<<"Top 10 jugadores de la liga"<<endl;
   for(int i = 0; i<10; i++){
     for(int j = 0; j<MAX_EQ;j++){
@@ -414,19 +422,20 @@ void printlist(){
   }while(list != NULL);
   system("pause");
 }
-
+/*Esta funcion se va a encargar de crear el archvio binario*/
 void creararchivobinario(){
-  FILE* arch;
+  FILE* arch; //Creamos la variable tipo archivo
   char temp[50];
   for(int i=0; i<MAX_EQ; i++){
-   string aux = equipos[i].nombre_equipo + ".dat";
-    strcpy(temp,aux.c_str());
-    arch = fopen(temp,"wb");
-    fwrite(&equipos[i],sizeof(equipo),1,arch);
+   string aux = equipos[i].nombre_equipo + ".dat"; //Le asignamso el nombre del equipo y le agregamos .dat para que sea binario
+    strcpy(temp,aux.c_str()); //La función de strcpy sirve para copiar un string a otro
+    arch = fopen(temp,"wb"); //abrimos el archivo a modo de escritura
+    fwrite(&equipos[i],sizeof(equipo),1,arch); //Le pasamos la estructura del equipo con la función fwrite
     fclose(arch);
 }
 }
-
+/*Leer un archivo binario funciona casi igual, repites los mismos pasos para crear un archvio binario solo que lo abres en modo lectura
+después recorrs todo el archivo imprimiendo sus datos hasta el final*/
 void leerarchivob(){
   FILE* arch;
   char temp[50];
@@ -435,7 +444,7 @@ void leerarchivob(){
     strcpy(temp,aux.c_str());
     arch = fopen(temp,"rb");
     fread(&equipos[i],sizeof(equipo),1,arch);
-    while(!feof(arch)){
+    while(!feof(arch)){ //Mientras no sea le final del archivo.
       cout<<"Nombre equipo: "<<equipos[i].nombre_equipo<<endl;
       cout<<"Jugadores:\n"<<endl;
       for(int j=0; j<12; j++){
@@ -449,3 +458,20 @@ void leerarchivob(){
     fclose(arch);
   }
 }
+//Esta función va a generar nombres aleatorios a los jugadores y retornará un string
+string nameplayer(){
+  string name = "";
+  int i = rand()%10 +2; //Genereamos aleatoriamiente el largo del nombre
+  int temp;
+  char random;
+  temp = rand()%25 +65; //Generamos una primer letra mayuscula
+  random = temp;
+  name += random;
+  for(int j=0; j<i;j++){
+    temp = rand()%25 + 97; //Generamos letras minusculas para terminar el nombre
+  random = temp;
+    name+= random;
+  }
+  return name;
+}
+/*Nota el rango de valores esta definido por el código ASCII de las letras*/

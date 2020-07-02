@@ -461,17 +461,14 @@ void leerarchivob(){
 //Esta función va a generar nombres aleatorios a los jugadores y retornará un string
 string nameplayer(){
   string name = "";
-  int i = rand()%10 +2; //Genereamos aleatoriamiente el largo del nombre
-  int temp;
-  char random;
-  temp = rand()%25 +65; //Generamos una primer letra mayuscula
-  random = temp;
-  name += random;
-  for(int j=0; j<i;j++){
-    temp = rand()%25 + 97; //Generamos letras minusculas para terminar el nombre
-  random = temp;
-    name+= random;
-  }
+  string aka[] = {"Juan", "Luis","Jose","Santiago","Francisco","Guadalupe","Maria","Juana","Antonio","Jesus","Andres","Diego", "Javier", "Michael","Sanchez"};
+  int aka_t = sizeof(aka)/sizeof(aka[0]);
+  string aka2[] = {"Hernandez", "Garcia","Martinez","Lopez","Gonzalez","Perez","Rodriguez","Sanchez","Ramirez","Cruz","Florez","Gomez","Jackson","Johnson","Amador"};
+  int aka_t2 = sizeof(aka2)/sizeof(aka2[0]);
+  int temp = rand()%aka_t;
+  name += aka[temp];
+  temp = rand()%aka_t2;
+  name += " "+aka2[temp];
   return name;
 }
 /*Nota el rango de valores esta definido por el código ASCII de las letras*/
